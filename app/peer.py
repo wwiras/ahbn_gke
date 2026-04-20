@@ -72,6 +72,12 @@ class PeerState:
         self.duplicate_count = 0
         self.forward_count = 0
         self.recv_count = 0
+        
+        # Local failure-pressure signal for adaptive reaction to broken paths.
+        self.fail_pressure = 0.0
+        self.fail_decay = 0.85
+        self.fail_boost = 1.0
+        self.fail_threshold = 0.25
 
         log_event(
             event="peer_started",
@@ -92,29 +98,46 @@ class PeerState:
             f"{self.grpc_port}"
         )
 
+    
     def adaptive_update(self) -> None:
         if self.strategy != "ahbn" or self.failed:
             return
 
         dup_pressure = self.duplicate_count / max(1, self.recv_count)
+        fail_pressure = self.fail_pressure
 
         old_mode = self.mode
         old_fanout = self.fanout
 
-        # if dup_pressure > self.mode_threshold:
-        #     self.mode = "cluster"
-        #     self.fanout = max(self.min_fanout, self.default_fanout - 1)
-        # else:
-        #     self.mode = "gossip"
-        #     self.fanout = min(self.max_fanout, self.default_fanout)
-        
-        if dup_pressure > self.mode_threshold:
+        # Failure-driven reaction takes priority:
+        # if recent forwarding failures are observed, temporarily switch
+        # toward more aggressive gossip with larger fanout.
+        if fail_pressure > self.fail_threshold:
+            self.mode = "gossip"
+            self.fanout = min(self.max_fanout, self.default_fanout + 3)
+
+        # Otherwise use duplicate-aware control.
+        elif dup_pressure > self.mode_threshold:
             self.mode = "cluster"
             self.fanout = max(self.min_fanout, self.default_fanout - 1)
         else:
             self.mode = "gossip"
-            # self.fanout = min(self.max_fanout, self.default_fanout + 1)
             self.fanout = min(self.max_fanout, self.default_fanout + 2)
+
+        log_event(
+            event="adaptive_state",
+            run_id=self.run_id,
+            peer_id=self.peer_id,
+            mode=self.mode,
+            fanout=self.fanout,
+            duplicate_count=self.duplicate_count,
+            recv_count=self.recv_count,
+            duplicate_ratio=dup_pressure,
+            fail_pressure=fail_pressure,
+            is_cluster_head=self.is_cluster_head,
+            overload_ms=self.overload_ms,
+            failed=self.failed,
+        )
 
         if self.mode != old_mode:
             log_event(
@@ -124,6 +147,7 @@ class PeerState:
                 old_mode=old_mode,
                 new_mode=self.mode,
                 duplicate_ratio=dup_pressure,
+                fail_pressure=fail_pressure,
             )
 
         if self.fanout != old_fanout:
@@ -134,8 +158,56 @@ class PeerState:
                 old_fanout=old_fanout,
                 new_fanout=self.fanout,
                 duplicate_ratio=dup_pressure,
+                fail_pressure=fail_pressure,
+            )
+    
+    
+    def trigger_failure_reaction(self, reason: str) -> None:
+        if self.strategy != "ahbn" or self.failed:
+            return
+
+        old_mode = self.mode
+        old_fanout = self.fanout
+
+        self.fail_pressure = min(1.0, self.fail_pressure + self.fail_boost)
+
+        # FORCE visible reaction immediately
+        self.mode = "gossip"
+        self.fanout = min(self.max_fanout, self.default_fanout + 3)
+
+        if self.mode != old_mode:
+            log_event(
+                event="mode_switched",
+                run_id=self.run_id,
+                peer_id=self.peer_id,
+                old_mode=old_mode,
+                new_mode=self.mode,
+                reason=reason,
+                fail_pressure=self.fail_pressure,
             )
 
+        if self.fanout != old_fanout:
+            log_event(
+                event="fanout_changed",
+                run_id=self.run_id,
+                peer_id=self.peer_id,
+                old_fanout=old_fanout,
+                new_fanout=self.fanout,
+                reason=reason,
+                fail_pressure=self.fail_pressure,
+            )
+
+        log_event(
+            event="failure_reaction",
+            run_id=self.run_id,
+            peer_id=self.peer_id,
+            fanout=self.fanout,
+            mode=self.mode,
+            fail_pressure=self.fail_pressure,
+            reason=reason,
+            is_cluster_head=self.is_cluster_head,
+        )
+    
     def cluster_targets(self, sender_id: int) -> list[int]:
         targets: list[int] = []
         if self.is_cluster_head:
@@ -201,6 +273,10 @@ class PeerState:
 
                 if resp.ok:
                     self.forward_count += 1
+
+                    # Successful forwarding gradually relaxes failure pressure.
+                    self.fail_pressure *= self.fail_decay
+
                     log_event(
                         event="forward",
                         run_id=self.run_id,
@@ -213,17 +289,25 @@ class PeerState:
                         fanout=self.fanout,
                         overload_ms=self.overload_ms,
                         is_cluster_head=self.is_cluster_head,
+                        fail_pressure=self.fail_pressure,
                     )
                 else:
+                    self.trigger_failure_reaction(reason="forward_rejected")
+
                     log_event(
                         event="forward_rejected",
                         run_id=self.run_id,
                         peer_id=self.peer_id,
                         dst_peer=dst_peer,
                         message_id=envelope.message_id,
-                    )
-        
+                        fail_pressure=self.fail_pressure,
+                    )               
+                
+
+            
         except Exception as e:
+            self.trigger_failure_reaction(reason="forward_failed")
+
             log_event(
                 event="forward_failed",
                 run_id=self.run_id,
@@ -231,6 +315,7 @@ class PeerState:
                 dst_peer=dst_peer,
                 message_id=envelope.message_id,
                 error=str(e),
+                fail_pressure=self.fail_pressure,
             )
 
     def process_envelope(self, envelope: peer_pb2.Envelope) -> tuple[bool, str]:

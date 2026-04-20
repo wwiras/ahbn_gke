@@ -11,7 +11,7 @@
   "num_clusters": 4,
   "settle_time": 8.0,
   "failure": {
-    "mode": "none",
+    "mode": "ch_failure",
     "trigger_time": 0.03,
     "overload_delay_ms": 300
   },

@@ -95,24 +95,69 @@ def plot_timeline(df: pd.DataFrame, out_png: str) -> None:
     plt.close()
 
 def plot_adaptation(df: pd.DataFrame, out_png: str) -> None:
-    fan = df[df["event"] == "fanout_changed"].copy()
-    mode = df[df["event"] == "mode_switched"].copy()
+    events = df[df["event"].isin(["fanout_changed", "failure_reaction"])].copy()
+    fail = df[df["event"] == "failure_triggered"].copy()
 
     plt.figure(figsize=(8, 4))
-    if not fan.empty:
-        plt.plot(fan["ts"] - fan["ts"].min(), fan["new_fanout"], marker="o", label="fanout")
-    if not mode.empty:
-        y = [1 if m == "gossip" else 0 for m in mode["new_mode"]]
-        plt.plot(mode["ts"] - mode["ts"].min(), y, marker="x", label="mode(gossip=1,cluster=0)")
-    if not fan.empty or not mode.empty:
+
+    if not events.empty:
+        events = events.sort_values("ts")
+        t0 = events["ts"].min()
+
+        # Use explicit fanout field when available, otherwise fallback to new_fanout
+        fanout_vals = []
+        for _, row in events.iterrows():
+            if pd.notna(row.get("fanout", None)):
+                fanout_vals.append(row["fanout"])
+            elif pd.notna(row.get("new_fanout", None)):
+                fanout_vals.append(row["new_fanout"])
+            else:
+                fanout_vals.append(None)
+
+        plt.plot(
+            events["ts"] - t0,
+            fanout_vals,
+            marker="o",
+            label="fanout",
+        )
+
+        # Mark explicit failure reactions so they are visually obvious
+        react = events[events["event"] == "failure_reaction"]
+        if not react.empty:
+            react_vals = []
+            for _, row in react.iterrows():
+                if pd.notna(row.get("fanout", None)):
+                    react_vals.append(row["fanout"])
+                elif pd.notna(row.get("new_fanout", None)):
+                    react_vals.append(row["new_fanout"])
+                else:
+                    react_vals.append(None)
+
+            plt.scatter(
+                react["ts"] - t0,
+                react_vals,
+                marker="x",
+                s=70,
+                label="failure reaction",
+            )
+
+        if not fail.empty:
+            fail_ts = fail["ts"].min()
+            plt.axvline(
+                x=fail_ts - t0,
+                linestyle="--",
+                linewidth=1,
+                label="failure",
+            )
+
         plt.legend()
+
     plt.xlabel("Time (s)")
     plt.ylabel("Adaptive state")
     plt.title("AHBN adaptation trace")
     plt.tight_layout()
     plt.savefig(out_png, dpi=180)
     plt.close()
-
 
 def main():
     ap = argparse.ArgumentParser()

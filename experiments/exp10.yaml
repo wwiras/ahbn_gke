@@ -13,9 +13,30 @@ topology:
   seed: 42
 
 failure:
-  mode: none
+  mode: ch_failure
+  target_peer: 5
   triggerTime: 0.03
   overloadDelayMs: 300
+
+
+# experiment: exp10
+# strategy: ahbn
+# numNodes: 20
+# fanout: 2
+# numClusters: 4
+# messageSource: 4
+# settleTime: 8.0
+
+# topology:
+#   type: ba
+#   baM: 2
+#   edgeProb: 0.2
+#   seed: 42
+
+# failure:
+#   mode: none
+#   triggerTime: 0.03
+#   overloadDelayMs: 300
 
 
 
