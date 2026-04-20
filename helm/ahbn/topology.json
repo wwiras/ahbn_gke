@@ -6,13 +6,13 @@
   "topology_type": "ba",
   "edge_prob": 0.2,
   "ba_m": 2,
-  "message_source": 0,
+  "message_source": 4,
   "fanout": 2,
   "num_clusters": 4,
-  "settle_time": 20.0,
+  "settle_time": 8.0,
   "failure": {
-    "mode": "ch_failure",
-    "trigger_time": 2.0,
+    "mode": "none",
+    "trigger_time": 0.03,
     "overload_delay_ms": 300
   },
   "ahbn": {

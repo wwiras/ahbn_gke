@@ -48,17 +48,22 @@ def wait_for_peers(num_nodes: int, svc: str, ns: str, port: int, timeout: int = 
             raise RuntimeError(f"peer-{peer_id} did not become ready")
 
 
-def choose_target(topo: dict, mode: str) -> int:
+def choose_target(topo: dict, mode: str) -> int | None:
     rng = random.Random(topo.get("seed", 42))
     source = topo["message_source"]
     nodes = topo["nodes"]
+
+    if mode == "none":
+        return None
 
     if mode == "node_failure":
         candidates = [int(k) for k in nodes.keys() if int(k) != source]
         return rng.choice(candidates)
 
     if mode in ("ch_failure", "overload"):
-        chs = [int(k) for k, v in nodes.items() if v["is_cluster_head"]]
+        chs = [int(k) for k, v in nodes.items() if v["is_cluster_head"] and int(k) != source]
+        if not chs:
+            raise RuntimeError("No eligible cluster head found that is not the source")
         return rng.choice(chs)
 
     raise ValueError(f"unsupported mode {mode}")
@@ -124,26 +129,31 @@ def main() -> None:
         )
     log_event(event="source_triggered", run_id=run_id, peer_id=source_id, message_id="m1")
 
-    time.sleep(trigger_time)
-    target = choose_target(topo, mode)
-    # log_event(event="failure_triggered", run_id=run_id, failure_mode=mode, target_peer=target)
-    
-    is_ch = topo["nodes"][str(target)]["is_cluster_head"]
+    if mode != "none":
+        time.sleep(trigger_time)
+        target = choose_target(topo, mode)
+        is_ch = topo["nodes"][str(target)]["is_cluster_head"]
 
-    log_event(
-        event="failure_triggered",
-        run_id=run_id,
-        failure_mode=mode,
-        target_peer=target,
-        is_cluster_head=is_ch,
-    )
+        log_event(
+            event="failure_triggered",
+            run_id=run_id,
+            failure_mode=mode,
+            target_peer=target,
+            is_cluster_head=is_ch,
+        )
 
-    if mode in ("node_failure", "ch_failure"):
-        fail_stop_peer(target, peer_svc, namespace, grpc_port)
-    elif mode == "overload":
-        apply_overload(target, peer_svc, namespace, grpc_port, overload_ms)
+        if mode in ("node_failure", "ch_failure"):
+            fail_stop_peer(target, peer_svc, namespace, grpc_port)
+        elif mode == "overload":
+            apply_overload(target, peer_svc, namespace, grpc_port, overload_ms)
+        else:
+            raise ValueError(mode)
     else:
-        raise ValueError(mode)
+        log_event(
+            event="failure_skipped",
+            run_id=run_id,
+            failure_mode="none",
+        )
 
     time.sleep(float(topo.get("settle_time", 15.0)))
     log_event(event="run_finished", run_id=run_id)
