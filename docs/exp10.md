@@ -1,0 +1,139 @@
+
+# Exp10 - Node Failure
+Guideline for Exp10 command. Run 
+
+### Prerequisite
+You need these on your machine:
+- gcloud
+- kubectl
+- helm
+- docker
+- python
+- a Python virtual environment for local scripts
+
+You also need:
+- a running GKE cluster
+- a Docker registry you can push to, such as Docker Hub
+
+### Step by step (How to execute)
+
+Create GKE k8s cluster
+```bash
+$ gcloud container clusters create bcgossip-cluster \
+  --zone=us-central1-a --num-nodes 7 \
+  --machine-type e2-medium --quiet
+```
+
+
+Create docker image for peers in the P2P network. Make sure docker run in the background.
+The latest image is wwiras/ahbn-peer:v10 .
+```bash
+$ docker build --platform linux/amd64 -t wwiras/ahbn-peer:v10 .
+$ docker push wwiras/ahbn-peer:v10
+```
+
+Run Exp10 automation and output examples
+```bash
+$ ahbn_gke % IMAGE=wwiras/ahbn-peer:v10 ./scripts/run_exp10.sh
+[1] Generate topology
+wrote /Users/wwiras/Documents/src/AHBN_GKEProj/ahbn_gke/outputs/exp10-20260420_180532/topology.json
+[2] Copy topology into Helm chart payload
+[3] Reset previous release if present
+[4] Install peers only (controller disabled)
+NAME: ahbn
+LAST DEPLOYED: Mon Apr 20 18:05:37 2026
+NAMESPACE: ahbn-exp10
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+[5] Wait for StatefulSet rollout
+Waiting for 20 pods to be ready...
+Waiting for 20 pods to be ready...
+Waiting for 19 pods to be ready...
+Waiting for 19 pods to be ready...
+Waiting for 18 pods to be ready...
+Waiting for 18 pods to be ready...
+Waiting for 17 pods to be ready...
+Waiting for 17 pods to be ready...
+Waiting for 16 pods to be ready...
+Waiting for 16 pods to be ready...
+Waiting for 15 pods to be ready...
+Waiting for 15 pods to be ready...
+Waiting for 14 pods to be ready...
+Waiting for 14 pods to be ready...
+Waiting for 13 pods to be ready...
+Waiting for 13 pods to be ready...
+Waiting for 12 pods to be ready...
+Waiting for 12 pods to be ready...
+Waiting for 11 pods to be ready...
+Waiting for 11 pods to be ready...
+Waiting for 10 pods to be ready...
+Waiting for 10 pods to be ready...
+Waiting for 9 pods to be ready...
+Waiting for 9 pods to be ready...
+Waiting for 8 pods to be ready...
+Waiting for 8 pods to be ready...
+Waiting for 7 pods to be ready...
+Waiting for 7 pods to be ready...
+Waiting for 6 pods to be ready...
+Waiting for 6 pods to be ready...
+Waiting for 5 pods to be ready...
+Waiting for 5 pods to be ready...
+Waiting for 4 pods to be ready...
+Waiting for 4 pods to be ready...
+Waiting for 3 pods to be ready...
+Waiting for 3 pods to be ready...
+Waiting for 2 pods to be ready...
+Waiting for 2 pods to be ready...
+Waiting for 1 pods to be ready...
+Waiting for 1 pods to be ready...
+partitioned roll out complete: 20 new pods have been updated...
+[6] Wait for all peer pods to be Ready
+pod/peer-0 condition met
+pod/peer-1 condition met
+pod/peer-10 condition met
+pod/peer-11 condition met
+pod/peer-12 condition met
+pod/peer-13 condition met
+pod/peer-14 condition met
+pod/peer-15 condition met
+pod/peer-16 condition met
+pod/peer-17 condition met
+pod/peer-18 condition met
+pod/peer-19 condition met
+pod/peer-2 condition met
+pod/peer-3 condition met
+pod/peer-4 condition met
+pod/peer-5 condition met
+pod/peer-6 condition met
+pod/peer-7 condition met
+pod/peer-8 condition met
+pod/peer-9 condition met
+[7] Safety buffer before controller start
+[8] Start controller job
+Release "ahbn" has been upgraded. Happy Helming!
+NAME: ahbn
+LAST DEPLOYED: Mon Apr 20 18:06:48 2026
+NAMESPACE: ahbn-exp10
+STATUS: deployed
+REVISION: 2
+TEST SUITE: None
+[9] Wait for controller completion
+job.batch/ahbn-controller condition met
+[10] Collect logs
+[debug] Collecting diagnostics ...
+[11] Plot results
+run_id strategy failure_mode  delivery_ratio  propagation_delay  duplicates  total_forwards  recovery_time  delivered_peers  expected_nodes
+ exp10     ahbn   ch_failure             0.8           0.173416          20              13       0.138168               16              20
+DONE -> /Users/wwiras/Documents/src/AHBN_GKEProj/ahbn_gke/outputs/exp10-20260420_180532
+```
+
+Remove namespace and helm 
+```bash
+$ helm uninstall ahbn -n ahbn-exp10 || true\nkubectl delete namespace ahbn-exp10 --ignore-not-found=true
+```
+
+Remove GKE cluster 
+```bash
+$ gcloud container clusters delete  bcgossip-cluster --zone us-central1-a
+```
