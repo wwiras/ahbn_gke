@@ -101,12 +101,20 @@ class PeerState:
         old_mode = self.mode
         old_fanout = self.fanout
 
+        # if dup_pressure > self.mode_threshold:
+        #     self.mode = "cluster"
+        #     self.fanout = max(self.min_fanout, self.default_fanout - 1)
+        # else:
+        #     self.mode = "gossip"
+        #     self.fanout = min(self.max_fanout, self.default_fanout)
+        
         if dup_pressure > self.mode_threshold:
             self.mode = "cluster"
             self.fanout = max(self.min_fanout, self.default_fanout - 1)
         else:
             self.mode = "gossip"
-            self.fanout = min(self.max_fanout, self.default_fanout)
+            # self.fanout = min(self.max_fanout, self.default_fanout + 1)
+            self.fanout = min(self.max_fanout, self.default_fanout + 2)
 
         if self.mode != old_mode:
             log_event(
@@ -148,14 +156,39 @@ class PeerState:
         if self.strategy == "cluster":
             return self.cluster_targets(sender_id)
 
+        # AHBN
         self.adaptive_update()
+
         if self.mode == "cluster":
             return self.cluster_targets(sender_id)
 
+        # AHBN in gossip mode:
+        # keep local gossip, but preserve one structural path so dissemination
+        # does not die inside sparse inter-cluster connectivity.
+        targets: list[int] = []
+
+        # Local gossip neighbors
         candidates = [n for n in self.neighbors if n != sender_id]
         k = min(self.fanout, len(candidates))
-        return random.sample(candidates, k) if k > 0 else []
+        if k > 0:
+            targets.extend(random.sample(candidates, k))
 
+        # Structural backbone target
+        # if self.is_cluster_head:
+        #     gw_candidates = [n for n in self.gateway_neighbors if n != sender_id]
+        #     if gw_candidates:
+        #         targets.append(random.choice(gw_candidates))
+        if self.is_cluster_head:
+            gw_candidates = [n for n in self.gateway_neighbors if n != sender_id]
+            targets.extend(gw_candidates)
+        else:
+            if self.cluster_head_id != sender_id:
+                targets.append(self.cluster_head_id)
+
+        # Deduplicate and avoid self-target
+        targets = [t for t in sorted(set(targets)) if t != self.peer_id]
+        return targets
+    
     def forward_to_peer(self, dst_peer: int, envelope: peer_pb2.Envelope) -> None:
         if self.failed:
             return
