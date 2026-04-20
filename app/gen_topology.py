@@ -8,19 +8,49 @@ import networkx as nx
 import yaml
 
 
-def build_graph(num_nodes: int, topology_type: str, edge_prob: float, ba_m: int, seed: int):
+# def build_graph(num_nodes: int, topology_type: str, edge_prob: float, ba_m: int, seed: int):
+#     if topology_type == "er":
+#         g = nx.erdos_renyi_graph(num_nodes, edge_prob, seed=seed)
+#         if not nx.is_connected(g):
+#             largest = max(nx.connected_components(g), key=len)
+#             g = g.subgraph(largest).copy()
+#             mapping = {old: new for new, old in enumerate(sorted(g.nodes()))}
+#             g = nx.relabel_nodes(g, mapping)
+#     elif topology_type == "ba":
+#         g = nx.barabasi_albert_graph(num_nodes, ba_m, seed=seed)
+#     else:
+#         raise ValueError("topology.type must be er or ba")
+#     return g
+
+def build_graph(
+    num_nodes: int,
+    topology_type: str,
+    edge_prob: float,
+    ba_m: int,
+    seed: int,
+    max_tries: int = 100,
+):
     if topology_type == "er":
-        g = nx.erdos_renyi_graph(num_nodes, edge_prob, seed=seed)
-        if not nx.is_connected(g):
-            largest = max(nx.connected_components(g), key=len)
-            g = g.subgraph(largest).copy()
-            mapping = {old: new for new, old in enumerate(sorted(g.nodes()))}
-            g = nx.relabel_nodes(g, mapping)
+        # Keep retrying until we get a connected ER graph with exactly num_nodes nodes.
+        for attempt in range(max_tries):
+            attempt_seed = seed + attempt
+            g = nx.erdos_renyi_graph(num_nodes, edge_prob, seed=attempt_seed)
+            if nx.is_connected(g):
+                return g
+
+        raise RuntimeError(
+            f"Failed to generate a connected ER graph with "
+            f"num_nodes={num_nodes}, edge_prob={edge_prob} "
+            f"after {max_tries} attempts. "
+            f"Increase edgeProb or use topology.type=ba."
+        )
+
     elif topology_type == "ba":
         g = nx.barabasi_albert_graph(num_nodes, ba_m, seed=seed)
+        return g
+
     else:
         raise ValueError("topology.type must be er or ba")
-    return g
 
 
 def assign_clusters(num_nodes: int, num_clusters: int):

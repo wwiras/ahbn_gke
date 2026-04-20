@@ -6,9 +6,14 @@ numClusters: 4
 messageSource: 0
 settleTime: 20.0
 
+# topology:
+#   type: er
+#   edgeProb: 0.08
+#   seed: 42
+
 topology:
-  type: er
-  edgeProb: 0.08
+  type: ba
+  baM: 2
   seed: 42
 
 failure:

@@ -45,7 +45,16 @@ class PeerState:
         self.min_fanout = topo.get("ahbn", {}).get("min_fanout", 1)
         self.max_fanout = topo.get("ahbn", {}).get("max_fanout", 6)
 
-        node_cfg = topo["nodes"][str(self.peer_id)]
+
+        peer_key = str(self.peer_id)
+        if peer_key not in topo["nodes"]:
+            raise RuntimeError(
+                f"peer_id {self.peer_id} not found in topology nodes. "
+                f"Topology has {len(topo['nodes'])} nodes: "
+                f"{sorted(topo['nodes'].keys())[:10]}..."
+            )
+        node_cfg = topo["nodes"][peer_key]
+        # node_cfg = topo["nodes"][str(self.peer_id)]
         self.neighbors: list[int] = node_cfg["neighbors"]
         self.is_cluster_head: bool = bool(node_cfg["is_cluster_head"])
         self.cluster_members: list[int] = node_cfg.get("cluster_members", [])
