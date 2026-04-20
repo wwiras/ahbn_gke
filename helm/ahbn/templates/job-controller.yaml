@@ -1,0 +1,120 @@
+{{- if .Values.controller.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ahbn-controller
+  namespace: {{ .Values.namespace }}
+spec:
+  backoffLimit: 0
+  template:
+    metadata:
+      labels:
+        app: ahbn-controller
+    spec:
+      serviceAccountName: ahbn-controller
+      restartPolicy: Never
+      containers:
+        - name: controller
+          image: {{ .Values.image }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          command: ["python", "controller.py"]
+          env:
+            - name: TOPOLOGY_PATH
+              value: /config/topology.json
+            - name: PEER_SERVICE_NAME
+              value: {{ .Values.service.name | quote }}
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: GRPC_PORT
+              value: "{{ .Values.grpcPort }}"
+          volumeMounts:
+            - name: config
+              mountPath: /config
+      volumes:
+        - name: config
+          configMap:
+            name: ahbn-topology
+{{- end }}
+
+
+
+# {{- if .Values.controller.enabled }}
+# apiVersion: batch/v1
+# kind: Job
+# metadata:
+#   name: ahbn-controller
+#   namespace: {{ .Values.namespace }}
+# spec:
+#   backoffLimit: 0
+#   template:
+#     metadata:
+#       labels:
+#         app: ahbn-controller
+#     spec:
+#       serviceAccountName: ahbn-controller
+#       restartPolicy: Never
+#       containers:
+#         - name: controller
+#           image: {{ .Values.image }}
+#           imagePullPolicy: {{ .Values.imagePullPolicy }}
+#           command: ["python", "controller.py"]
+#           env:
+#             - name: TOPOLOGY_PATH
+#               value: /config/topology.json
+#             - name: PEER_SERVICE_NAME
+#               value: {{ .Values.service.name | quote }}
+#             - name: POD_NAMESPACE
+#               valueFrom:
+#                 fieldRef:
+#                   fieldPath: metadata.namespace
+#             - name: GRPC_PORT
+#               value: "{{ .Values.grpcPort }}"
+#           volumeMounts:
+#             - name: config
+#               mountPath: /config
+#       volumes:
+#         - name: config
+#           configMap:
+#             name: ahbn-topology
+# {{- end }}
+
+
+# # apiVersion: batch/v1
+# # kind: Job
+# # metadata:
+# #   name: ahbn-controller
+# #   namespace: {{ .Values.namespace }}
+# # spec:
+# #   backoffLimit: 0
+# #   template:
+# #     metadata:
+# #       labels:
+# #         app: ahbn-controller
+# #     spec:
+# #       serviceAccountName: ahbn-controller
+# #       restartPolicy: Never
+# #       containers:
+# #         - name: controller
+# #           image: {{ .Values.image }}
+# #           imagePullPolicy: {{ .Values.imagePullPolicy }}
+# #           command: ["python", "controller.py"]
+# #           env:
+# #             - name: TOPOLOGY_PATH
+# #               value: /config/topology.json
+# #             - name: PEER_SERVICE_NAME
+# #               value: {{ .Values.service.name | quote }}
+# #             - name: POD_NAMESPACE
+# #               valueFrom:
+# #                 fieldRef:
+# #                   fieldPath: metadata.namespace
+# #             - name: GRPC_PORT
+# #               value: "{{ .Values.grpcPort }}"
+# #           volumeMounts:
+# #             - name: config
+# #               mountPath: /config
+# #       volumes:
+# #         - name: config
+# #           configMap:
+# #             name: ahbn-topology

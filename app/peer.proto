@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package ahbn;
+
+message Ack {
+  bool ok = 1;
+  string message = 2;
+}
+
+message Empty {}
+
+message Envelope {
+  string run_id = 1;
+  string message_id = 2;
+  int32 source_id = 3;
+  int32 sender_id = 4;
+  double created_at = 5;
+  int32 hop = 6;
+}
+
+message StartRequest {
+  string run_id = 1;
+  string message_id = 2;
+}
+
+message OverloadRequest {
+  int32 delay_ms = 1;
+}
+
+message StatusReply {
+  bool ready = 1;
+  bool alive = 2;
+  int32 peer_id = 3;
+  bool is_cluster_head = 4;
+  string mode = 5;
+  int32 fanout = 6;
+  int32 seen_count = 7;
+}
+
+service PeerService {
+  rpc Forward(Envelope) returns (Ack);
+  rpc StartRun(StartRequest) returns (Ack);
+  rpc InjectOverload(OverloadRequest) returns (Ack);
+  rpc ClearOverload(Empty) returns (Ack);
+  rpc FailStop(Empty) returns (Ack);
+  rpc GetStatus(Empty) returns (StatusReply);
+}

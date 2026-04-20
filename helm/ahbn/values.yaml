@@ -1,0 +1,53 @@
+namespace: ahbn-exp10
+
+image: ""
+imagePullPolicy: Always
+
+numNodes: 20
+grpcPort: 50051
+
+experiment:
+  runId: exp10
+  strategy: ahbn
+
+service:
+  name: ahbn-peer
+
+controller:
+  enabled: false
+
+resources:
+  requests:
+    cpu: "50m"
+    memory: "64Mi"
+  limits:
+    cpu: "200m"
+    memory: "128Mi"
+
+
+
+# namespace: ahbn-exp10
+
+# image: wwiras/ahbn-peer:v3
+# imagePullPolicy: Always
+
+# numNodes: 20
+# grpcPort: 50051
+
+# experiment:
+#   runId: exp10
+#   strategy: ahbn
+
+# service:
+#   name: ahbn-peer
+
+# resources:
+#   requests:
+#     cpu: "100m"
+#     memory: "128Mi"
+#   limits:
+#     cpu: "500m"
+#     memory: "256Mi"
+
+# controller:
+#   enabled: false

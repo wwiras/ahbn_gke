@@ -1,0 +1,147 @@
+{"cluster_head_id": 0, "event": "peer_started", "fanout": 3, "gateway_neighbors": [4], "is_cluster_head": true, "mode": "gossip", "neighbors": [2, 7, 9, 12, 13], "peer_id": 0, "run_id": "exp10", "strategy": "ahbn", "ts": 1776616860.085943}
+{"event": "grpc_server_started", "peer_id": 0, "port": 50051, "run_id": "exp10", "ts": 1776616860.1037312}
+{"event": "message_injected", "message_id": "m1", "peer_id": 0, "run_id": "exp10", "strategy": "ahbn", "ts": 1776616895.9641356}
+{"event": "received_new", "fanout": 3, "hop": 0, "is_cluster_head": true, "latency_ms": 0, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 0, "run_id": "exp10", "src_peer": 0, "strategy": "ahbn", "ts": 1776616895.9643095}
+{"dst_peer": 13, "event": "forward", "fanout": 3, "is_cluster_head": true, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 0, "run_id": "exp10", "src_peer": 0, "strategy": "ahbn", "ts": 1776616895.981337}
+{"dst_peer": 7, "event": "forward", "fanout": 3, "is_cluster_head": true, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 0, "run_id": "exp10", "src_peer": 0, "strategy": "ahbn", "ts": 1776616895.9829113}
+{"dst_peer": 12, "event": "forward", "fanout": 3, "is_cluster_head": true, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 0, "run_id": "exp10", "src_peer": 0, "strategy": "ahbn", "ts": 1776616895.9883437}
+{"event": "received_duplicate", "fanout": 3, "hop": 5, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 0, "run_id": "exp10", "src_peer": 9, "strategy": "ahbn", "ts": 1776616896.076184}
+{"cluster_head_id": 0, "event": "peer_started", "fanout": 3, "gateway_neighbors": [], "is_cluster_head": false, "mode": "gossip", "neighbors": [2, 5, 8, 9], "peer_id": 1, "run_id": "exp10", "strategy": "ahbn", "ts": 1776616860.9241312}
+{"event": "grpc_server_started", "peer_id": 1, "port": 50051, "run_id": "exp10", "ts": 1776616860.9745097}
+{"event": "received_new", "fanout": 3, "hop": 5, "is_cluster_head": false, "latency_ms": 89, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 1, "run_id": "exp10", "src_peer": 2, "strategy": "ahbn", "ts": 1776616896.0531523}
+{"dst_peer": 8, "event": "forward_rejected", "message_id": "m1", "peer_id": 1, "run_id": "exp10", "ts": 1776616896.0688837}
+{"dst_peer": 9, "event": "forward_rejected", "message_id": "m1", "peer_id": 1, "run_id": "exp10", "ts": 1776616896.070332}
+{"dst_peer": 5, "event": "forward", "fanout": 3, "is_cluster_head": false, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 1, "run_id": "exp10", "src_peer": 1, "strategy": "ahbn", "ts": 1776616896.0711288}
+{"event": "received_duplicate", "fanout": 3, "hop": 5, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 1, "run_id": "exp10", "src_peer": 9, "strategy": "ahbn", "ts": 1776616896.0871506}
+{"cluster_head_id": 8, "event": "peer_started", "fanout": 3, "gateway_neighbors": [], "is_cluster_head": false, "mode": "gossip", "neighbors": [4, 7, 8, 11, 17], "peer_id": 10, "run_id": "exp10", "strategy": "ahbn", "ts": 1776616877.0082045}
+{"event": "grpc_server_started", "peer_id": 10, "port": 50051, "run_id": "exp10", "ts": 1776616877.0243442}
+{"event": "received_new", "fanout": 3, "hop": 2, "is_cluster_head": false, "latency_ms": 35, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 10, "run_id": "exp10", "src_peer": 7, "strategy": "ahbn", "ts": 1776616895.9996848}
+{"dst_peer": 17, "event": "forward", "fanout": 3, "is_cluster_head": false, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 10, "run_id": "exp10", "src_peer": 10, "strategy": "ahbn", "ts": 1776616896.0171034}{"event": "received_duplicate", "fanout": 3, "hop": 3, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 10, "run_id": "exp10", "src_peer": 8, "strategy": "ahbn", "ts": 1776616896.018845}
+
+{"dst_peer": 11, "event": "forward", "fanout": 3, "is_cluster_head": false, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 10, "run_id": "exp10", "src_peer": 10, "strategy": "ahbn", "ts": 1776616896.021051}
+{"dst_peer": 4, "event": "forward", "fanout": 3, "is_cluster_head": false, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 10, "run_id": "exp10", "src_peer": 10, "strategy": "ahbn", "ts": 1776616896.0218973}
+{"cluster_head_id": 8, "event": "peer_started", "fanout": 3, "gateway_neighbors": [], "is_cluster_head": false, "mode": "gossip", "neighbors": [2, 10, 15], "peer_id": 11, "run_id": "exp10", "strategy": "ahbn", "ts": 1776616878.3921952}
+{"event": "grpc_server_started", "peer_id": 11, "port": 50051, "run_id": "exp10", "ts": 1776616878.4085753}
+{"event": "received_new", "fanout": 3, "hop": 3, "is_cluster_head": false, "latency_ms": 51, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 11, "run_id": "exp10", "src_peer": 10, "strategy": "ahbn", "ts": 1776616896.0154207}
+{"event": "received_duplicate", "fanout": 3, "hop": 3, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 11, "run_id": "exp10", "src_peer": 15, "strategy": "ahbn", "ts": 1776616896.0287886}
+{"dst_peer": 15, "event": "forward_rejected", "message_id": "m1", "peer_id": 11, "run_id": "exp10", "ts": 1776616896.039631}
+{"dst_peer": 2, "event": "forward_rejected", "message_id": "m1", "peer_id": 11, "run_id": "exp10", "ts": 1776616896.042485}
+{"event": "received_duplicate", "fanout": 3, "hop": 5, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 11, "run_id": "exp10", "src_peer": 2, "strategy": "ahbn", "ts": 1776616896.0541422}
+{"cluster_head_id": 12, "event": "peer_started", "fanout": 3, "gateway_neighbors": [8], "is_cluster_head": true, "mode": "gossip", "neighbors": [0, 13], "peer_id": 12, "run_id": "exp10", "strategy": "ahbn", "ts": 1776616880.2980602}
+{"event": "grpc_server_started", "peer_id": 12, "port": 50051, "run_id": "exp10", "ts": 1776616880.3199747}
+{"event": "received_new", "fanout": 3, "hop": 1, "is_cluster_head": true, "latency_ms": 21, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 12, "run_id": "exp10", "src_peer": 0, "strategy": "ahbn", "ts": 1776616895.9857569}
+{"dst_peer": 13, "event": "forward_rejected", "message_id": "m1", "peer_id": 12, "run_id": "exp10", "ts": 1776616896.008268}
+{"cluster_head_id": 12, "event": "peer_started", "fanout": 3, "gateway_neighbors": [], "is_cluster_head": false, "mode": "gossip", "neighbors": [0, 5, 8, 12, 14, 15], "peer_id": 13, "run_id": "exp10", "strategy": "ahbn", "ts": 1776616881.4624612}
+{"event": "grpc_server_started", "peer_id": 13, "port": 50051, "run_id": "exp10", "ts": 1776616881.486927}
+{"event": "received_new", "fanout": 3, "hop": 1, "is_cluster_head": false, "latency_ms": 14, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 13, "run_id": "exp10", "src_peer": 0, "strategy": "ahbn", "ts": 1776616895.9787903}
+{"dst_peer": 8, "event": "forward", "fanout": 3, "is_cluster_head": false, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 13, "run_id": "exp10", "src_peer": 13, "strategy": "ahbn", "ts": 1776616896.0008798}
+{"dst_peer": 15, "event": "forward", "fanout": 3, "is_cluster_head": false, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 13, "run_id": "exp10", "src_peer": 13, "strategy": "ahbn", "ts": 1776616896.0041392}{"dst_peer": 14, "event": "forward", "fanout": 3, "is_cluster_head": false, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 13, "run_id": "exp10", "src_peer": 13, "strategy": "ahbn", "ts": 1776616896.0034285}
+
+{"event": "received_duplicate", "fanout": 3, "hop": 2, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 13, "run_id": "exp10", "src_peer": 12, "strategy": "ahbn", "ts": 1776616896.0069096}
+{"event": "received_duplicate", "fanout": 3, "hop": 7, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 13, "run_id": "exp10", "src_peer": 5, "strategy": "ahbn", "ts": 1776616896.0860243}
+{"cluster_head_id": 12, "event": "peer_started", "fanout": 3, "gateway_neighbors": [], "is_cluster_head": false, "mode": "gossip", "neighbors": [4, 6, 13, 18], "peer_id": 14, "run_id": "exp10", "strategy": "ahbn", "ts": 1776616883.2071097}
+{"event": "grpc_server_started", "peer_id": 14, "port": 50051, "run_id": "exp10", "ts": 1776616883.2249012}
+{"event": "received_new", "fanout": 3, "hop": 2, "is_cluster_head": false, "latency_ms": 32, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 14, "run_id": "exp10", "src_peer": 13, "strategy": "ahbn", "ts": 1776616895.9968026}
+{"dst_peer": 6, "event": "forward", "fanout": 3, "is_cluster_head": false, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 14, "run_id": "exp10", "src_peer": 14, "strategy": "ahbn", "ts": 1776616896.0188289}
+{"dst_peer": 4, "event": "forward_rejected", "message_id": "m1", "peer_id": 14, "run_id": "exp10", "ts": 1776616896.0238342}
+{"dst_peer": 18, "event": "forward", "fanout": 3, "is_cluster_head": false, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 14, "run_id": "exp10", "src_peer": 14, "strategy": "ahbn", "ts": 1776616896.0254717}
+{"event": "received_duplicate", "fanout": 3, "hop": 4, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 14, "run_id": "exp10", "src_peer": 4, "strategy": "ahbn", "ts": 1776616896.0333142}
+{"cluster_head_id": 12, "event": "peer_started", "fanout": 3, "gateway_neighbors": [], "is_cluster_head": false, "mode": "gossip", "neighbors": [7, 11, 13], "peer_id": 15, "run_id": "exp10", "strategy": "ahbn", "ts": 1776616884.8485944}
+{"event": "grpc_server_started", "peer_id": 15, "port": 50051, "run_id": "exp10", "ts": 1776616884.865298}
+{"event": "received_new", "fanout": 3, "hop": 2, "is_cluster_head": false, "latency_ms": 34, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 15, "run_id": "exp10", "src_peer": 13, "strategy": "ahbn", "ts": 1776616895.998521}
+{"event": "received_duplicate", "fanout": 3, "hop": 2, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 15, "run_id": "exp10", "src_peer": 7, "strategy": "ahbn", "ts": 1776616896.006679}
+{"dst_peer": 7, "event": "forward_rejected", "message_id": "m1", "peer_id": 15, "run_id": "exp10", "ts": 1776616896.0206277}
+{"dst_peer": 11, "event": "forward_rejected", "message_id": "m1", "peer_id": 15, "run_id": "exp10", "ts": 1776616896.0325885}
+{"event": "received_duplicate", "fanout": 3, "hop": 4, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 15, "run_id": "exp10", "src_peer": 11, "strategy": "ahbn", "ts": 1776616896.03849}
+{"cluster_head_id": 12, "event": "peer_started", "fanout": 3, "gateway_neighbors": [], "is_cluster_head": false, "mode": "gossip", "neighbors": [3, 18], "peer_id": 16, "run_id": "exp10", "strategy": "ahbn", "ts": 1776616887.2525787}
+{"event": "grpc_server_started", "peer_id": 16, "port": 50051, "run_id": "exp10", "ts": 1776616887.311612}
+{"event": "received_new", "fanout": 3, "hop": 4, "is_cluster_head": false, "latency_ms": 84, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 16, "run_id": "exp10", "src_peer": 18, "strategy": "ahbn", "ts": 1776616896.0485442}
+{"dst_peer": 3, "event": "forward", "fanout": 3, "is_cluster_head": false, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 16, "run_id": "exp10", "src_peer": 16, "strategy": "ahbn", "ts": 1776616896.0793777}
+{"cluster_head_id": 12, "event": "peer_started", "fanout": 3, "gateway_neighbors": [], "is_cluster_head": false, "mode": "gossip", "neighbors": [10], "peer_id": 17, "run_id": "exp10", "strategy": "ahbn", "ts": 1776616888.9895813}
+{"event": "grpc_server_started", "peer_id": 17, "port": 50051, "run_id": "exp10", "ts": 1776616889.0483425}
+{"event": "received_new", "fanout": 3, "hop": 3, "is_cluster_head": false, "latency_ms": 50, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 17, "run_id": "exp10", "src_peer": 10, "strategy": "ahbn", "ts": 1776616896.0143535}
+{"cluster_head_id": 12, "event": "peer_started", "fanout": 3, "gateway_neighbors": [], "is_cluster_head": false, "mode": "gossip", "neighbors": [7, 14, 16], "peer_id": 18, "run_id": "exp10", "strategy": "ahbn", "ts": 1776616890.3118117}
+{"event": "grpc_server_started", "peer_id": 18, "port": 50051, "run_id": "exp10", "ts": 1776616890.3355312}
+{"event": "received_new", "fanout": 3, "hop": 3, "is_cluster_head": false, "latency_ms": 57, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 18, "run_id": "exp10", "src_peer": 14, "strategy": "ahbn", "ts": 1776616896.0218816}
+{"dst_peer": 7, "event": "forward_rejected", "message_id": "m1", "peer_id": 18, "run_id": "exp10", "ts": 1776616896.0510123}
+{"dst_peer": 16, "event": "forward", "fanout": 3, "is_cluster_head": false, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 18, "run_id": "exp10", "src_peer": 18, "strategy": "ahbn", "ts": 1776616896.0522194}
+Traceback (most recent call last):
+  File "/app/peer.py", line 352, in <module>
+    serve()
+  File "/app/peer.py", line 337, in serve
+    state = PeerState()
+            ^^^^^^^^^^^
+  File "/app/peer.py", line 48, in __init__
+    node_cfg = topo["nodes"][str(self.peer_id)]
+               ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+KeyError: '19'
+{"cluster_head_id": 0, "event": "peer_started", "fanout": 3, "gateway_neighbors": [], "is_cluster_head": false, "mode": "gossip", "neighbors": [0, 1, 6, 9, 11], "peer_id": 2, "run_id": "exp10", "strategy": "ahbn", "ts": 1776616862.7739835}
+{"event": "grpc_server_started", "peer_id": 2, "port": 50051, "run_id": "exp10", "ts": 1776616862.8036144}
+{"event": "received_new", "fanout": 3, "hop": 4, "is_cluster_head": false, "latency_ms": 67, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 2, "run_id": "exp10", "src_peer": 6, "strategy": "ahbn", "ts": 1776616896.0313797}
+{"event": "received_duplicate", "fanout": 3, "hop": 4, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 2, "run_id": "exp10", "src_peer": 11, "strategy": "ahbn", "ts": 1776616896.040135}
+{"dst_peer": 11, "event": "forward_rejected", "message_id": "m1", "peer_id": 2, "run_id": "exp10", "ts": 1776616896.054956}
+{"dst_peer": 1, "event": "forward", "fanout": 3, "is_cluster_head": false, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 2, "run_id": "exp10", "src_peer": 2, "strategy": "ahbn", "ts": 1776616896.0565295}
+{"event": "received_duplicate", "fanout": 3, "hop": 5, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 2, "run_id": "exp10", "src_peer": 9, "strategy": "ahbn", "ts": 1776616896.0657604}
+{"dst_peer": 9, "event": "forward_rejected", "message_id": "m1", "peer_id": 2, "run_id": "exp10", "ts": 1776616896.0694175}
+{"cluster_head_id": 0, "event": "peer_started", "fanout": 3, "gateway_neighbors": [], "is_cluster_head": false, "mode": "gossip", "neighbors": [5, 7, 16], "peer_id": 3, "run_id": "exp10", "strategy": "ahbn", "ts": 1776616865.0311112}
+{"event": "grpc_server_started", "peer_id": 3, "port": 50051, "run_id": "exp10", "ts": 1776616865.0542905}
+{"event": "received_new", "fanout": 3, "hop": 5, "is_cluster_head": false, "latency_ms": 112, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 3, "run_id": "exp10", "src_peer": 16, "strategy": "ahbn", "ts": 1776616896.0770588}
+{"event": "received_duplicate", "fanout": 3, "hop": 7, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 3, "run_id": "exp10", "src_peer": 5, "strategy": "ahbn", "ts": 1776616896.094187}
+{"dst_peer": 5, "event": "forward_rejected", "message_id": "m1", "peer_id": 3, "run_id": "exp10", "ts": 1776616896.1034539}{"dst_peer": 7, "event": "forward_rejected", "message_id": "m1", "peer_id": 3, "run_id": "exp10", "ts": 1776616896.1038141}
+
+{"cluster_head_id": 4, "event": "peer_started", "fanout": 3, "gateway_neighbors": [0, 8], "is_cluster_head": true, "mode": "gossip", "neighbors": [8, 9, 10, 14], "peer_id": 4, "run_id": "exp10", "strategy": "ahbn", "ts": 1776616866.8403032}
+{"event": "grpc_server_started", "peer_id": 4, "port": 50051, "run_id": "exp10", "ts": 1776616866.8637133}
+{"event": "received_new", "fanout": 3, "hop": 3, "is_cluster_head": true, "latency_ms": 51, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 4, "run_id": "exp10", "src_peer": 10, "strategy": "ahbn", "ts": 1776616896.0159416}
+{"event": "received_duplicate", "fanout": 3, "hop": 3, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 4, "run_id": "exp10", "src_peer": 14, "strategy": "ahbn", "ts": 1776616896.0223665}
+{"dst_peer": 8, "event": "forward_rejected", "message_id": "m1", "peer_id": 4, "run_id": "exp10", "ts": 1776616896.0349221}
+{"dst_peer": 14, "event": "forward_rejected", "message_id": "m1", "peer_id": 4, "run_id": "exp10", "ts": 1776616896.0353637}
+{"dst_peer": 9, "event": "forward", "fanout": 3, "is_cluster_head": true, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 4, "run_id": "exp10", "src_peer": 4, "strategy": "ahbn", "ts": 1776616896.0426164}
+{"event": "peer_failed", "is_cluster_head": true, "peer_id": 4, "run_id": "exp10", "ts": 1776616896.971761}
+{"cluster_head_id": 4, "event": "peer_started", "fanout": 3, "gateway_neighbors": [], "is_cluster_head": false, "mode": "gossip", "neighbors": [1, 3, 7, 13], "peer_id": 5, "run_id": "exp10", "strategy": "ahbn", "ts": 1776616868.5572805}
+{"event": "grpc_server_started", "peer_id": 5, "port": 50051, "run_id": "exp10", "ts": 1776616868.5760136}
+{"event": "received_new", "fanout": 3, "hop": 6, "is_cluster_head": false, "latency_ms": 103, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 5, "run_id": "exp10", "src_peer": 1, "strategy": "ahbn", "ts": 1776616896.0675876}
+{"dst_peer": 7, "event": "forward_rejected", "message_id": "m1", "peer_id": 5, "run_id": "exp10", "ts": 1776616896.0842786}
+{"dst_peer": 13, "event": "forward_rejected", "message_id": "m1", "peer_id": 5, "run_id": "exp10", "ts": 1776616896.0874488}
+{"dst_peer": 3, "event": "forward_rejected", "message_id": "m1", "peer_id": 5, "run_id": "exp10", "ts": 1776616896.0984282}
+{"event": "received_duplicate", "fanout": 3, "hop": 6, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 5, "run_id": "exp10", "src_peer": 3, "strategy": "ahbn", "ts": 1776616896.1021788}
+{"cluster_head_id": 4, "event": "peer_started", "fanout": 3, "gateway_neighbors": [], "is_cluster_head": false, "mode": "gossip", "neighbors": [2, 8, 14], "peer_id": 6, "run_id": "exp10", "strategy": "ahbn", "ts": 1776616870.311607}
+{"event": "grpc_server_started", "peer_id": 6, "port": 50051, "run_id": "exp10", "ts": 1776616870.3370838}
+{"event": "received_new", "fanout": 3, "hop": 3, "is_cluster_head": false, "latency_ms": 49, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 6, "run_id": "exp10", "src_peer": 14, "strategy": "ahbn", "ts": 1776616896.0141306}
+{"event": "received_duplicate", "fanout": 3, "hop": 3, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 6, "run_id": "exp10", "src_peer": 8, "strategy": "ahbn", "ts": 1776616896.0187256}
+{"dst_peer": 8, "event": "forward_rejected", "message_id": "m1", "peer_id": 6, "run_id": "exp10", "ts": 1776616896.0307238}
+{"dst_peer": 2, "event": "forward", "fanout": 3, "is_cluster_head": false, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 6, "run_id": "exp10", "src_peer": 6, "strategy": "ahbn", "ts": 1776616896.0395234}
+{"cluster_head_id": 4, "event": "peer_started", "fanout": 3, "gateway_neighbors": [], "is_cluster_head": false, "mode": "gossip", "neighbors": [0, 3, 5, 8, 10, 15, 18], "peer_id": 7, "run_id": "exp10", "strategy": "ahbn", "ts": 1776616871.7401745}
+{"event": "grpc_server_started", "peer_id": 7, "port": 50051, "run_id": "exp10", "ts": 1776616871.7574654}
+{"event": "received_new", "fanout": 3, "hop": 1, "is_cluster_head": false, "latency_ms": 15, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 7, "run_id": "exp10", "src_peer": 0, "strategy": "ahbn", "ts": 1776616895.9794908}
+{"dst_peer": 8, "event": "forward_rejected", "message_id": "m1", "peer_id": 7, "run_id": "exp10", "ts": 1776616896.0032115}
+{"dst_peer": 15, "event": "forward_rejected", "message_id": "m1", "peer_id": 7, "run_id": "exp10", "ts": 1776616896.0080395}
+{"dst_peer": 10, "event": "forward", "fanout": 3, "is_cluster_head": false, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 7, "run_id": "exp10", "src_peer": 7, "strategy": "ahbn", "ts": 1776616896.009226}
+{"event": "received_duplicate", "fanout": 3, "hop": 3, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 7, "run_id": "exp10", "src_peer": 8, "strategy": "ahbn", "ts": 1776616896.0128748}
+{"event": "received_duplicate", "fanout": 3, "hop": 3, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 7, "run_id": "exp10", "src_peer": 15, "strategy": "ahbn", "ts": 1776616896.019059}
+{"event": "received_duplicate", "fanout": 3, "hop": 4, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 7, "run_id": "exp10", "src_peer": 18, "strategy": "ahbn", "ts": 1776616896.0491168}
+{"event": "received_duplicate", "fanout": 3, "hop": 7, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 7, "run_id": "exp10", "src_peer": 5, "strategy": "ahbn", "ts": 1776616896.0828934}
+{"event": "received_duplicate", "fanout": 3, "hop": 6, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 7, "run_id": "exp10", "src_peer": 3, "strategy": "ahbn", "ts": 1776616896.1023374}
+{"cluster_head_id": 8, "event": "peer_started", "fanout": 3, "gateway_neighbors": [4, 12], "is_cluster_head": true, "mode": "gossip", "neighbors": [1, 4, 6, 7, 10, 13], "peer_id": 8, "run_id": "exp10", "strategy": "ahbn", "ts": 1776616873.8883457}
+{"event": "grpc_server_started", "peer_id": 8, "port": 50051, "run_id": "exp10", "ts": 1776616873.9095705}
+{"event": "received_new", "fanout": 3, "hop": 2, "is_cluster_head": true, "latency_ms": 32, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 8, "run_id": "exp10", "src_peer": 13, "strategy": "ahbn", "ts": 1776616895.9964323}
+{"event": "received_duplicate", "fanout": 3, "hop": 2, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 8, "run_id": "exp10", "src_peer": 7, "strategy": "ahbn", "ts": 1776616896.0014524}
+{"dst_peer": 7, "event": "forward_rejected", "message_id": "m1", "peer_id": 8, "run_id": "exp10", "ts": 1776616896.0143888}
+{"dst_peer": 6, "event": "forward_rejected", "message_id": "m1", "peer_id": 8, "run_id": "exp10", "ts": 1776616896.0199034}{"dst_peer": 10, "event": "forward_rejected", "message_id": "m1", "peer_id": 8, "run_id": "exp10", "ts": 1776616896.0202286}
+
+{"event": "received_duplicate", "fanout": 3, "hop": 4, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 8, "run_id": "exp10", "src_peer": 6, "strategy": "ahbn", "ts": 1776616896.0297194}
+{"event": "received_duplicate", "fanout": 3, "hop": 4, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 8, "run_id": "exp10", "src_peer": 4, "strategy": "ahbn", "ts": 1776616896.0337582}
+{"event": "received_duplicate", "fanout": 3, "hop": 6, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 8, "run_id": "exp10", "src_peer": 1, "strategy": "ahbn", "ts": 1776616896.068181}
+{"cluster_head_id": 8, "event": "peer_started", "fanout": 3, "gateway_neighbors": [], "is_cluster_head": false, "mode": "gossip", "neighbors": [0, 1, 2, 4], "peer_id": 9, "run_id": "exp10", "strategy": "ahbn", "ts": 1776616875.5249407}
+{"event": "grpc_server_started", "peer_id": 9, "port": 50051, "run_id": "exp10", "ts": 1776616875.5803595}
+{"event": "received_new", "fanout": 3, "hop": 4, "is_cluster_head": false, "latency_ms": 73, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 9, "run_id": "exp10", "src_peer": 4, "strategy": "ahbn", "ts": 1776616896.037935}
+{"event": "received_duplicate", "fanout": 3, "hop": 5, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 9, "run_id": "exp10", "src_peer": 2, "strategy": "ahbn", "ts": 1776616896.0672019}
+{"event": "received_duplicate", "fanout": 3, "hop": 6, "message_id": "m1", "mode": "gossip", "overload_ms": 0, "peer_id": 9, "run_id": "exp10", "src_peer": 1, "strategy": "ahbn", "ts": 1776616896.0695643}
+{"dst_peer": 2, "event": "forward_rejected", "message_id": "m1", "peer_id": 9, "run_id": "exp10", "ts": 1776616896.0723615}
+{"dst_peer": 0, "event": "forward_rejected", "message_id": "m1", "peer_id": 9, "run_id": "exp10", "ts": 1776616896.0799239}
+{"dst_peer": 1, "event": "forward_rejected", "message_id": "m1", "peer_id": 9, "run_id": "exp10", "ts": 1776616896.0884693}
+{"event": "controller_started", "failure_mode": "node_failure", "run_id": "exp10", "ts": 1776616860.3538983}
+{"event": "all_peers_ready", "run_id": "exp10", "ts": 1776616895.955723}
+{"event": "source_triggered", "message_id": "m1", "peer_id": 0, "run_id": "exp10", "ts": 1776616895.9672105}
+{"event": "failure_triggered", "failure_mode": "node_failure", "is_cluster_head": true, "run_id": "exp10", "target_peer": 4, "ts": 1776616896.9676003}
+{"attempt": 1, "event": "fail_stop_requested", "peer_id": 4, "ts": 1776616896.9731293}
+{"event": "run_finished", "run_id": "exp10", "ts": 1776616911.9733853}

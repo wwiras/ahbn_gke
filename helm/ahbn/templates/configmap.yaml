@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ahbn-topology
+  namespace: {{ .Values.namespace }}
+data:
+  topology.json: |
+{{ .Files.Get "topology.json" | indent 4 }}

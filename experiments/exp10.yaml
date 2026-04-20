@@ -1,0 +1,72 @@
+experiment: exp10
+strategy: ahbn
+numNodes: 20
+fanout: 2
+numClusters: 4
+messageSource: 0
+settleTime: 20.0
+
+topology:
+  type: er
+  edgeProb: 0.08
+  seed: 42
+
+failure:
+  mode: ch_failure
+  triggerTime: 2.0
+  overloadDelayMs: 300
+
+# experiment: exp10
+# strategy: ahbn
+# numNodes: 30
+# fanout: 2
+# numClusters: 5
+# messageSource: 0
+# settleTime: 20.0
+
+# topology:
+#   type: er
+#   edgeProb: 0.08
+#   seed: 42
+
+# failure:
+#   mode: ch_failure
+#   triggerTime: 2.0
+#   overloadDelayMs: 300
+
+
+# experiment: exp10
+# strategy: ahbn
+# numNodes: 20
+# fanout: 3
+# numClusters: 4
+# messageSource: 0
+# settleTime: 15.0
+
+# topology:
+#   type: er
+#   edgeProb: 0.2
+#   seed: 42
+
+# failure:
+#   mode: node_failure
+#   triggerTime: 1.0
+#   overloadDelayMs: 200
+
+# experiment: exp10
+# strategy: ahbn
+# numNodes: 50
+# fanout: 3
+# numClusters: 5
+# messageSource: 0
+# settleTime: 20.0
+
+# topology:
+#   type: er
+#   edgeProb: 0.08
+#   seed: 42
+
+# failure:
+#   mode: ch_failure
+#   triggerTime: 2.0
+#   overloadDelayMs: 300
