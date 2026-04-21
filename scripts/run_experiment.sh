@@ -96,7 +96,11 @@ echo "[10] Collect logs"
 collect_debug
 
 echo "[11] Plot results"
-python "${ROOT_DIR}/app/plot_exp10.py" \
+PLOT_SCRIPT="${ROOT_DIR}/app/plot_exp10.py"
+if [ "${EXP_NAME}" = "exp11" ]; then
+  PLOT_SCRIPT="${ROOT_DIR}/app/plot_exp11.py"
+fi
+python "${PLOT_SCRIPT}" \
   --log "${OUTDIR}/logs.jsonl" \
   --expected-nodes "${NUM_NODES}" \
   --outdir "${OUTDIR}"

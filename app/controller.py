@@ -6,6 +6,8 @@ import random
 import time
 
 import grpc
+from kubernetes import client, config
+from kubernetes.client.rest import ApiException
 
 import peer_pb2
 import peer_pb2_grpc
@@ -29,7 +31,6 @@ def peer_addr(peer_id: int, svc: str, ns: str, port: int) -> str:
 
 
 def wait_for_peers(num_nodes: int, svc: str, ns: str, port: int, timeout: int = 300) -> None:
-# def wait_for_peers(num_nodes, peer_svc, namespace, grpc_port, timeout=300):
     start = time.time()
     for peer_id in range(num_nodes):
         ok = False
@@ -46,6 +47,21 @@ def wait_for_peers(num_nodes: int, svc: str, ns: str, port: int, timeout: int = 
             time.sleep(1.0)
         if not ok:
             raise RuntimeError(f"peer-{peer_id} did not become ready")
+
+
+def wait_for_peer_ready(peer_id: int, svc: str, ns: str, port: int, timeout: int = 180) -> None:
+    start = time.time()
+    while time.time() - start < timeout:
+        try:
+            with grpc.insecure_channel(peer_addr(peer_id, svc, ns, port)) as channel:
+                stub = peer_pb2_grpc.PeerServiceStub(channel)
+                status = stub.GetStatus(peer_pb2.Empty(), timeout=2)
+                if status.ready:
+                    return
+        except Exception:
+            pass
+        time.sleep(1.0)
+    raise RuntimeError(f"peer-{peer_id} did not recover within {timeout}s")
 
 
 def choose_target(topo: dict, mode: str) -> int | None:
@@ -67,6 +83,36 @@ def choose_target(topo: dict, mode: str) -> int | None:
         return rng.choice(chs)
 
     raise ValueError(f"unsupported mode {mode}")
+
+
+def choose_churn_targets(topo: dict, count: int, target_type: str) -> list[int]:
+    rng = random.Random(topo.get("seed", 42) + 99)
+    source = topo["message_source"]
+    nodes = topo["nodes"]
+
+    candidates: list[int] = []
+    for k, v in nodes.items():
+        peer_id = int(k)
+        if peer_id == source:
+            continue
+        is_ch = bool(v["is_cluster_head"])
+        if target_type == "cluster_head" and not is_ch:
+            continue
+        if target_type == "non_ch" and is_ch:
+            continue
+        candidates.append(peer_id)
+
+    if not candidates:
+        raise RuntimeError(f"No eligible churn targets for target_type={target_type}")
+
+    rng.shuffle(candidates)
+    if count <= len(candidates):
+        return candidates[:count]
+
+    out: list[int] = []
+    while len(out) < count:
+        out.extend(candidates)
+    return out[:count]
 
 
 def fail_stop_peer(peer_id: int, svc: str, ns: str, port: int) -> None:
@@ -102,6 +148,72 @@ def apply_overload(peer_id: int, svc: str, ns: str, port: int, delay_ms: int) ->
     log_event(event="overload_requested", peer_id=peer_id, overload_ms=delay_ms)
 
 
+def delete_peer_pod(peer_id: int, ns: str) -> None:
+    config.load_incluster_config()
+    v1 = client.CoreV1Api()
+    pod_name = f"peer-{peer_id}"
+    try:
+        v1.delete_namespaced_pod(
+            name=pod_name,
+            namespace=ns,
+            grace_period_seconds=0,
+        )
+        log_event(event="pod_delete_requested", peer_id=peer_id, pod_name=pod_name)
+    except ApiException as e:
+        if e.status == 404:
+            log_event(event="pod_delete_missing", peer_id=peer_id, pod_name=pod_name)
+            return
+        raise
+
+
+def inject_messages(run_id: str, source_id: int, peer_svc: str, namespace: str, grpc_port: int,
+                    message_count: int, message_interval: float) -> None:
+    for idx in range(message_count):
+        message_id = f"m{idx + 1}"
+        with grpc.insecure_channel(peer_addr(source_id, peer_svc, namespace, grpc_port)) as channel:
+            stub = peer_pb2_grpc.PeerServiceStub(channel)
+            stub.StartRun(
+                peer_pb2.StartRequest(run_id=run_id, message_id=message_id),
+                timeout=3,
+            )
+        log_event(event="source_triggered", run_id=run_id, peer_id=source_id, message_id=message_id)
+        if idx < message_count - 1 and message_interval > 0:
+            time.sleep(message_interval)
+
+
+def run_churn(topo: dict, peer_svc: str, namespace: str, grpc_port: int) -> None:
+    failure = topo["failure"]
+    trigger_time = float(failure.get("trigger_time", 1.0))
+    num_events = int(failure.get("num_events", 3))
+    interval_sec = float(failure.get("interval_sec", 1.0))
+    target_type = str(failure.get("target_type", "mixed"))
+
+    time.sleep(trigger_time)
+    targets = choose_churn_targets(topo, num_events, target_type)
+
+    for idx, target in enumerate(targets, start=1):
+        is_ch = topo["nodes"][str(target)]["is_cluster_head"]
+        log_event(
+            event="churn_triggered",
+            run_id=topo["run_id"],
+            churn_index=idx,
+            target_peer=target,
+            is_cluster_head=is_ch,
+            target_type=target_type,
+        )
+        delete_peer_pod(target, namespace)
+        wait_for_peer_ready(target, peer_svc, namespace, grpc_port)
+        log_event(
+            event="churn_recovered",
+            run_id=topo["run_id"],
+            churn_index=idx,
+            target_peer=target,
+            is_cluster_head=is_ch,
+        )
+        if idx < len(targets) and interval_sec > 0:
+            time.sleep(interval_sec)
+
+
 def main() -> None:
     topo_path = os.environ.get("TOPOLOGY_PATH", "/config/topology.json")
     peer_svc = os.environ.get("PEER_SERVICE_NAME", "ahbn-peer")
@@ -113,24 +225,31 @@ def main() -> None:
     num_nodes = topo["num_nodes"]
     source_id = topo["message_source"]
     failure = topo["failure"]
-    trigger_time = float(failure["trigger_time"])
     mode = failure["mode"]
     overload_ms = int(failure.get("overload_delay_ms", 200))
+
+    workload = topo.get("workload", {})
+    message_count = int(workload.get("message_count", 1))
+    message_interval = float(workload.get("message_interval", 0.0))
 
     log_event(event="controller_started", run_id=run_id, failure_mode=mode)
     wait_for_peers(num_nodes, peer_svc, namespace, grpc_port)
     log_event(event="all_peers_ready", run_id=run_id)
 
-    with grpc.insecure_channel(peer_addr(source_id, peer_svc, namespace, grpc_port)) as channel:
-        stub = peer_pb2_grpc.PeerServiceStub(channel)
-        stub.StartRun(
-            peer_pb2.StartRequest(run_id=run_id, message_id="m1"),
-            timeout=3,
-        )
-    log_event(event="source_triggered", run_id=run_id, peer_id=source_id, message_id="m1")
+    inject_messages(
+        run_id=run_id,
+        source_id=source_id,
+        peer_svc=peer_svc,
+        namespace=namespace,
+        grpc_port=grpc_port,
+        message_count=message_count,
+        message_interval=message_interval,
+    )
 
-    if mode != "none":
-        time.sleep(trigger_time)
+    if mode == "churn":
+        run_churn(topo, peer_svc, namespace, grpc_port)
+    elif mode != "none":
+        time.sleep(float(failure["trigger_time"]))
         target = choose_target(topo, mode)
         is_ch = topo["nodes"][str(target)]["is_cluster_head"]
 

@@ -8,20 +8,6 @@ import networkx as nx
 import yaml
 
 
-# def build_graph(num_nodes: int, topology_type: str, edge_prob: float, ba_m: int, seed: int):
-#     if topology_type == "er":
-#         g = nx.erdos_renyi_graph(num_nodes, edge_prob, seed=seed)
-#         if not nx.is_connected(g):
-#             largest = max(nx.connected_components(g), key=len)
-#             g = g.subgraph(largest).copy()
-#             mapping = {old: new for new, old in enumerate(sorted(g.nodes()))}
-#             g = nx.relabel_nodes(g, mapping)
-#     elif topology_type == "ba":
-#         g = nx.barabasi_albert_graph(num_nodes, ba_m, seed=seed)
-#     else:
-#         raise ValueError("topology.type must be er or ba")
-#     return g
-
 def build_graph(
     num_nodes: int,
     topology_type: str,
@@ -31,7 +17,6 @@ def build_graph(
     max_tries: int = 100,
 ):
     if topology_type == "er":
-        # Keep retrying until we get a connected ER graph with exactly num_nodes nodes.
         for attempt in range(max_tries):
             attempt_seed = seed + attempt
             g = nx.erdos_renyi_graph(num_nodes, edge_prob, seed=attempt_seed)
@@ -98,6 +83,13 @@ def main():
     failure_mode = failure_cfg.get("mode", "node_failure")
     trigger_time = float(failure_cfg.get("triggerTime", 1.0))
     overload_delay_ms = int(failure_cfg.get("overloadDelayMs", 200))
+    num_events = int(failure_cfg.get("numEvents", 3))
+    interval_sec = float(failure_cfg.get("intervalSec", 1.0))
+    target_type = str(failure_cfg.get("targetType", "mixed"))
+
+    workload_cfg = cfg.get("workload", {})
+    message_count = int(workload_cfg.get("messageCount", 1))
+    message_interval = float(workload_cfg.get("messageInterval", 0.0))
 
     g = build_graph(num_nodes, topology_type, edge_prob, ba_m, seed)
     actual_nodes = g.number_of_nodes()
@@ -141,6 +133,13 @@ def main():
             "mode": failure_mode,
             "trigger_time": trigger_time,
             "overload_delay_ms": overload_delay_ms,
+            "num_events": num_events,
+            "interval_sec": interval_sec,
+            "target_type": target_type,
+        },
+        "workload": {
+            "message_count": message_count,
+            "message_interval": message_interval,
         },
         "ahbn": {
             "mode_threshold": 0.5,
