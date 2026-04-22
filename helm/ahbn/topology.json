@@ -11,16 +11,16 @@
   "num_clusters": 4,
   "settle_time": 12.0,
   "failure": {
-    "mode": "node_failure",
+    "mode": "churn",
     "trigger_time": 1.0,
     "overload_delay_ms": 0,
-    "num_events": 3,
-    "interval_sec": 1.0,
+    "num_events": 4,
+    "interval_sec": 1.2,
     "target_type": "mixed"
   },
   "workload": {
-    "message_count": 1,
-    "message_interval": 0.0
+    "message_count": 10,
+    "message_interval": 0.8
   },
   "ahbn": {
     "mode_threshold": 0.5,

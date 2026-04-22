@@ -41,10 +41,36 @@ collect_debug() {
 
 trap 'collect_debug' EXIT
 
+# echo "[1] Generate topology"
+# python "${ROOT_DIR}/app/gen_topology.py" \
+#   --config "${ROOT_DIR}/${CONFIG}" \
+#   --out "${OUTDIR}/topology.json"
+
+# NUM_NODES="$(python - <<PY
+# import json
+# with open("${OUTDIR}/topology.json", "r", encoding="utf-8") as f:
+#     topo = json.load(f)
+# print(int(topo["num_nodes"]))
+# PY
+# )"
+
 echo "[1] Generate topology"
 python "${ROOT_DIR}/app/gen_topology.py" \
   --config "${ROOT_DIR}/${CONFIG}" \
   --out "${OUTDIR}/topology.json"
+
+echo "[debug] Inspect generated topology"
+python - <<PY
+import json
+with open("${OUTDIR}/topology.json", "r", encoding="utf-8") as f:
+    topo = json.load(f)
+
+print("=== FAILURE CONFIG ===")
+print(json.dumps(topo.get("failure"), indent=2))
+
+print("=== WORKLOAD CONFIG ===")
+print(json.dumps(topo.get("workload"), indent=2))
+PY
 
 NUM_NODES="$(python - <<PY
 import json

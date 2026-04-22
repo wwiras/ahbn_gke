@@ -12,6 +12,32 @@ topology:
   edgeProb: 0.2
   seed: 42
 
+workload:
+  messageCount: 10
+  messageInterval: 0.8
+
+failure:
+  mode: churn
+  triggerTime: 1.0
+  numEvents: 4
+  intervalSec: 1.2
+  targetType: mixed
+  overloadDelayMs: 0
+
+# experiment: exp11
+# strategy: ahbn
+# numNodes: 20
+# fanout: 2
+# numClusters: 4
+# messageSource: 4
+# settleTime: 12.0
+
+# topology:
+#   type: ba
+#   baM: 2
+#   edgeProb: 0.2
+#   seed: 42
+
 # workload:
 #   messageCount: 6
 #   messageInterval: 0.8
@@ -25,14 +51,14 @@ topology:
 #   overloadDelayMs: 0
 
 
-workload:
-  message_count: 10
-  message_interval: 0.8
+# workload:
+#   message_count: 10
+#   message_interval: 0.8
 
-failure:
-  trigger_time: 1.0
-  interval_sec: 1.2
-  num_events: 4
-  intervalSec: 1.0
-  targetType: mixed
-  overloadDelayMs: 0
+# failure:
+#   trigger_time: 1.0
+#   interval_sec: 1.2
+#   num_events: 4
+#   intervalSec: 1.0
+#   targetType: mixed
+#   overloadDelayMs: 0
