@@ -1,2 +1,0 @@
-run_id,strategy,failure_mode,delivery_ratio,propagation_delay,duplicates,total_forwards,recovery_time,delivered_peers,expected_nodes
-exp10,ahbn,node_failure,0.95,0.11292314529418945,26,15,-0.8905415534973145,19,20
