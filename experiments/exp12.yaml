@@ -1,0 +1,31 @@
+experiment: exp12
+strategy: ahbn
+numNodes: 20
+fanout: 2
+numClusters: 4
+messageSource: 4
+settleTime: 14.0
+
+topology:
+  type: ba
+  baM: 2
+  edgeProb: 0.2
+  seed: 42
+
+workload:
+  messageCount: 10
+  messageInterval: 0.8
+
+failure:
+  mode: mixed_resources
+  triggerTime: 0.6
+  overloadDelayMs: 350
+  targetType: low_resource
+  numEvents: 6
+
+resources:
+  enabled: true
+  lowResourceFraction: 0.30
+  mediumOverloadMs: 120
+  lowOverloadMs: 350
+  avoidSource: true

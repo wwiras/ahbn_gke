@@ -1,5 +1,5 @@
 {
-  "run_id": "exp11",
+  "run_id": "exp12",
   "seed": 42,
   "strategy": "ahbn",
   "num_nodes": 20,
@@ -9,14 +9,14 @@
   "message_source": 4,
   "fanout": 2,
   "num_clusters": 4,
-  "settle_time": 12.0,
+  "settle_time": 14.0,
   "failure": {
-    "mode": "churn",
-    "trigger_time": 1.0,
-    "overload_delay_ms": 0,
-    "num_events": 4,
-    "interval_sec": 1.2,
-    "target_type": "mixed"
+    "mode": "mixed_resources",
+    "trigger_time": 0.6,
+    "overload_delay_ms": 350,
+    "num_events": 6,
+    "interval_sec": 1.0,
+    "target_type": "low_resource"
   },
   "workload": {
     "message_count": 10,

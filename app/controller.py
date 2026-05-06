@@ -76,31 +76,87 @@ def wait_for_peer_ready(peer_id: int, svc: str, ns: str, port: int, timeout: int
     raise RuntimeError(f"peer-{peer_id} did not recover within {timeout}s")
 
 
-def choose_target(topo: dict, mode: str) -> int | None:
-    rng = random.Random(topo.get("seed", 42))
-    source = topo["message_source"]
-    nodes = topo["nodes"]
+    peers_raw = topo.get("peers", [])
 
-    if mode == "none":
-        return None
+    # Support both formats:
+    # 1) peers: [{...}, {...}]
+    # 2) peers: {"peer-0": {...}, "peer-1": {...}}
+    if isinstance(peers_raw, dict):
+        peers = []
+        for peer_id, peer_data in peers_raw.items():
+            if isinstance(peer_data, dict):
+                p = dict(peer_data)
+                p.setdefault("id", peer_id)
+                p.setdefault("peer_id", peer_id)
+                peers.append(p)
+    elif isinstance(peers_raw, list):
+        peers = peers_raw
+    else:
+        peers = []
 
-    if mode == "node_failure":
-        candidates = [int(k) for k in nodes.keys() if int(k) != source]
-        return rng.choice(candidates)
+    if not peers:
+        raise RuntimeError("No peers found in topology.json")
 
-    if mode in ("ch_failure", "overload"):
-        chs = [
-            int(k)
-            for k, v in nodes.items()
-            if v["is_cluster_head"] and int(k) != source
+    # Exp12: target low-resource peers when available
+    if mode == "resource" or mode == "exp12":
+        candidates = [
+            p for p in peers
+            if isinstance(p, dict)
+            and p.get("resource_group") == "low"
+            and not p.get("failed", False)
         ]
 
-        if not chs:
-            raise RuntimeError("No eligible cluster head found that is not the source")
+        if candidates:
+            return candidates[0].get("id") or candidates[0].get("peer_id") or candidates[0].get("name")
 
-        return rng.choice(chs)
+    # Fallback: choose any non-failed peer
+    candidates = [
+        p for p in peers
+        if isinstance(p, dict)
+        and not p.get("failed", False)
+    ]
 
-    raise ValueError(f"unsupported mode {mode}")
+    if not candidates:
+        raise RuntimeError("No valid target peers found")
+
+    target = candidates[0]
+    return target.get("id") or target.get("peer_id") or target.get("name")
+
+
+def choose_target(topo, mode):
+    nodes = topo.get("nodes", {})
+    source = int(topo.get("message_source", -1))
+    failure = topo.get("failure", {})
+    target_type = failure.get("target_type", "mixed")
+
+    if not nodes:
+        raise RuntimeError("No nodes found in topology.json")
+
+    candidates = []
+
+    for k, v in nodes.items():
+        peer_id = int(k)
+
+        if peer_id == source:
+            continue
+
+        is_ch = bool(v.get("is_cluster_head", False))
+
+        if mode == "ch_failure" and not is_ch:
+            continue
+
+        if target_type == "cluster_head" and not is_ch:
+            continue
+
+        if target_type == "non_ch" and is_ch:
+            continue
+
+        candidates.append(peer_id)
+
+    if not candidates:
+        raise RuntimeError(f"No valid target nodes found for mode={mode}, target_type={target_type}")
+
+    return candidates[0]
 
 
 def choose_churn_targets(topo: dict, count: int, target_type: str) -> list[int]:
@@ -276,6 +332,38 @@ def run_churn(topo: dict, peer_svc: str, namespace: str, grpc_port: int) -> None
         if idx < len(targets) and interval_sec > 0:
             time.sleep(interval_sec)
 
+def run_mixed_resources(topo: dict, peer_svc: str, namespace: str, grpc_port: int) -> None:
+    failure = topo["failure"]
+
+    trigger_time = float(failure.get("trigger_time", 1.0))
+    num_events = int(failure.get("num_events", 3))
+    overload_ms = int(failure.get("overload_delay_ms", 350))
+
+    source = int(topo.get("message_source", -1))
+    nodes = topo.get("nodes", {})
+
+    candidates = [
+        int(k) for k, v in nodes.items()
+        if int(k) != source and not bool(v.get("is_cluster_head", False))
+    ]
+
+    if not candidates:
+        raise RuntimeError("No eligible mixed-resource targets found")
+
+    targets = candidates[:num_events]
+
+    time.sleep(trigger_time)
+
+    for target in targets:
+        apply_overload(target, peer_svc, namespace, grpc_port, overload_ms)
+
+        log_event(
+            event="mixed_resource_applied",
+            run_id=topo["run_id"],
+            peer_id=target,
+            overload_ms=overload_ms,
+        )
+
 
 def main() -> None:
     topo_path = os.environ.get("TOPOLOGY_PATH", "/config/topology.json")
@@ -309,16 +397,24 @@ def main() -> None:
 
     log_event(event="all_peers_ready", run_id=run_id)
 
-    churn_thread = None
+    stress_thread = None
 
     if mode == "churn":
-        churn_thread = threading.Thread(
+        stress_thread = threading.Thread(
             target=run_churn,
             args=(topo, peer_svc, namespace, grpc_port),
             daemon=True,
         )
-        churn_thread.start()
+        stress_thread.start()
 
+    elif mode == "mixed_resources":
+        stress_thread = threading.Thread(
+            target=run_mixed_resources,
+            args=(topo, peer_svc, namespace, grpc_port),
+            daemon=True,
+        )
+        stress_thread.start()
+    
     inject_messages(
         run_id=run_id,
         source_id=source_id,
@@ -329,9 +425,9 @@ def main() -> None:
         message_interval=message_interval,
     )
 
-    if mode == "churn":
-        if churn_thread is not None:
-            churn_thread.join()
+    if mode in ("churn", "mixed_resources"):
+        if stress_thread is not None:
+            stress_thread.join()
 
     elif mode != "none":
         time.sleep(float(failure["trigger_time"]))

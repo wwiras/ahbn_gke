@@ -41,19 +41,6 @@ collect_debug() {
 
 trap 'collect_debug' EXIT
 
-# echo "[1] Generate topology"
-# python "${ROOT_DIR}/app/gen_topology.py" \
-#   --config "${ROOT_DIR}/${CONFIG}" \
-#   --out "${OUTDIR}/topology.json"
-
-# NUM_NODES="$(python - <<PY
-# import json
-# with open("${OUTDIR}/topology.json", "r", encoding="utf-8") as f:
-#     topo = json.load(f)
-# print(int(topo["num_nodes"]))
-# PY
-# )"
-
 echo "[1] Generate topology"
 python "${ROOT_DIR}/app/gen_topology.py" \
   --config "${ROOT_DIR}/${CONFIG}" \
@@ -125,6 +112,8 @@ echo "[11] Plot results"
 PLOT_SCRIPT="${ROOT_DIR}/app/plot_exp10.py"
 if [ "${EXP_NAME}" = "exp11" ]; then
   PLOT_SCRIPT="${ROOT_DIR}/app/plot_exp11.py"
+elif [ "${EXP_NAME}" = "exp12" ]; then
+  PLOT_SCRIPT="${ROOT_DIR}/app/plot_exp12.py"
 fi
 python "${PLOT_SCRIPT}" \
   --log "${OUTDIR}/logs.jsonl" \
