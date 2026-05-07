@@ -4,7 +4,7 @@ numNodes: 20
 fanout: 2
 numClusters: 4
 messageSource: 4
-settleTime: 14.0
+settleTime: 25.0
 
 topology:
   type: ba
@@ -13,15 +13,16 @@ topology:
   seed: 42
 
 workload:
-  messageCount: 10
-  messageInterval: 0.8
+  messageCount: 30
+  messageInterval: 0.5
 
 failure:
   mode: mixed_resources
   triggerTime: 0.6
   overloadDelayMs: 350
-  targetType: low_resource
   numEvents: 6
+  intervalSec: 1.0
+  targetType: low_resource
 
 resources:
   enabled: true

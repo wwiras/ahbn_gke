@@ -9,7 +9,7 @@
   "message_source": 4,
   "fanout": 2,
   "num_clusters": 4,
-  "settle_time": 14.0,
+  "settle_time": 25.0,
   "failure": {
     "mode": "mixed_resources",
     "trigger_time": 0.6,
@@ -19,8 +19,8 @@
     "target_type": "low_resource"
   },
   "workload": {
-    "message_count": 10,
-    "message_interval": 0.8
+    "message_count": 30,
+    "message_interval": 0.5
   },
   "ahbn": {
     "mode_threshold": 0.5,
