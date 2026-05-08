@@ -364,6 +364,93 @@ def run_mixed_resources(topo: dict, peer_svc: str, namespace: str, grpc_port: in
             overload_ms=overload_ms,
         )
 
+def run_bottleneck(
+    topo: dict,
+    peer_svc: str,
+    namespace: str,
+    grpc_port: int,
+) -> None:
+    bottleneck = topo.get("bottleneck", {})
+
+    enabled = bool(
+        bottleneck.get("enabled", False)
+    )
+
+    if not enabled:
+        return
+
+    trigger_time = float(
+        topo.get("failure", {}).get(
+            "trigger_time",
+            1.0,
+        )
+    )
+
+    delay_ms = int(
+        bottleneck.get("delay_ms", 250)
+    )
+
+    target_type = str(
+        bottleneck.get("target", "ch_only")
+    )
+
+    time.sleep(trigger_time)
+
+    nodes = topo.get("nodes", {})
+
+    targets = []
+
+    for k, v in nodes.items():
+        peer_id = int(k)
+
+        is_ch = bool(
+            v.get("is_cluster_head", False)
+        )
+
+        if target_type == "ch_only":
+            if is_ch:
+                targets.append(peer_id)
+
+        elif target_type == "non_ch":
+            if not is_ch:
+                targets.append(peer_id)
+
+        elif target_type == "all":
+            targets.append(peer_id)
+
+    if not targets:
+        raise RuntimeError(
+            f"No bottleneck targets found "
+            f"for target_type={target_type}"
+        )
+
+    log_event(
+        event="bottleneck_started",
+        run_id=topo["run_id"],
+        target_type=target_type,
+        delay_ms=delay_ms,
+        targets=targets,
+    )
+
+    for peer_id in targets:
+        apply_overload(
+            peer_id,
+            peer_svc,
+            namespace,
+            grpc_port,
+            delay_ms,
+        )
+
+        log_event(
+            event="bottleneck_applied",
+            run_id=topo["run_id"],
+            peer_id=peer_id,
+            delay_ms=delay_ms,
+            is_cluster_head=nodes[str(peer_id)][
+                "is_cluster_head"
+            ],
+        )
+
 
 def main() -> None:
     topo_path = os.environ.get("TOPOLOGY_PATH", "/config/topology.json")
@@ -414,6 +501,20 @@ def main() -> None:
             daemon=True,
         )
         stress_thread.start()
+        
+    elif mode == "bottleneck":
+        stress_thread = threading.Thread(
+            target=run_bottleneck,
+            args=(
+                topo,
+                peer_svc,
+                namespace,
+                grpc_port,
+            ),
+            daemon=True,
+        )
+
+        stress_thread.start()
     
     inject_messages(
         run_id=run_id,
@@ -425,7 +526,11 @@ def main() -> None:
         message_interval=message_interval,
     )
 
-    if mode in ("churn", "mixed_resources"):
+    if mode in (
+        "churn",
+        "mixed_resources",
+        "bottleneck",
+    ):
         if stress_thread is not None:
             stress_thread.join()
 
