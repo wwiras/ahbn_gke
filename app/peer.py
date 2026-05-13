@@ -181,9 +181,10 @@ class PeerState:
             )
         )
 
-        self.bottleneck_active = (
-            self.should_apply_bottleneck()
-        )
+        # Runtime bottleneck state. This must start as False so that
+        # Exp8 has a real pre-bottleneck phase. The controller activates
+        # it later through InjectOverload at failure.triggerTime.
+        self.bottleneck_active = False
 
         # --------------------------------------------------
         # Runtime state
@@ -718,11 +719,9 @@ class PeerState:
                 self.overload_ms / 1000.0
             )
 
-        # Exp8 CH bottleneck delay
-
-        self.apply_bottleneck_delay(
-            envelope.message_id
-        )
+        # Bottleneck/overload delay is applied through overload_ms only.
+        # This avoids double-counting delay and ensures the bottleneck
+        # begins only after the controller trigger time.
 
         delivery_ms = int(
             (
@@ -843,12 +842,17 @@ class PeerService(
             request.delay_ms
         )
 
+        if self.state.overload_ms > 0:
+            self.state.bottleneck_active = True
+
         log_event(
             event="overload_applied",
             run_id=self.state.run_id,
             experiment=self.state.experiment,
             peer_id=self.state.peer_id,
             overload_ms=self.state.overload_ms,
+            bottleneck_active=self.state.bottleneck_active,
+            is_cluster_head=self.state.is_cluster_head,
         )
 
         return peer_pb2.Ack(
@@ -862,6 +866,7 @@ class PeerService(
         context,
     ):
         self.state.overload_ms = 0
+        self.state.bottleneck_active = False
 
         log_event(
             event="overload_cleared",

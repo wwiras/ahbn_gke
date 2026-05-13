@@ -1,0 +1,28 @@
+experiment: exp8_ahbn
+strategy: ahbn
+
+numNodes: 20
+fanout: 3
+numClusters: 4
+
+messageSource: 0
+settleTime: 18.0
+
+topology:
+  type: ba
+  baM: 2
+  seed: 42
+
+failure:
+  mode: bottleneck
+  triggerTime: 0.5
+  overloadDelayMs: 700
+
+workload:
+  messageCount: 20
+  messageInterval: 0.4
+
+bottleneck:
+  enabled: true
+  target: ch_only
+  delayMs: 700

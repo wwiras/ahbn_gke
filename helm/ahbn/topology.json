@@ -1,9 +1,9 @@
 {
-  "run_id": "exp8",
-  "experiment": "exp8",
+  "run_id": "exp8_gossip",
+  "experiment": "exp8_gossip",
   "mode": "bottleneck",
   "seed": 42,
-  "strategy": "ahbn",
+  "strategy": "gossip",
   "num_nodes": 20,
   "topology_type": "ba",
   "edge_prob": 0.2,
@@ -11,11 +11,11 @@
   "message_source": 0,
   "fanout": 3,
   "num_clusters": 4,
-  "settle_time": 15.0,
+  "settle_time": 18.0,
   "failure": {
     "mode": "bottleneck",
     "trigger_time": 0.5,
-    "overload_delay_ms": 250,
+    "overload_delay_ms": 700,
     "num_events": 3,
     "interval_sec": 1.0,
     "target_type": "mixed"
@@ -23,11 +23,11 @@
   "bottleneck": {
     "enabled": true,
     "target": "ch_only",
-    "delay_ms": 250
+    "delay_ms": 700
   },
   "workload": {
-    "message_count": 6,
-    "message_interval": 0.8
+    "message_count": 20,
+    "message_interval": 0.4
   },
   "ahbn": {
     "mode_threshold": 0.5,
