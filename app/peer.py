@@ -314,7 +314,7 @@ class PeerState:
 
             self.fanout = min(
                 self.max_fanout,
-                self.default_fanout + 3,
+                self.default_fanout + 1,
             )
 
         # --------------------------------------------------
@@ -334,7 +334,7 @@ class PeerState:
 
             self.fanout = min(
                 self.max_fanout,
-                self.default_fanout + 2,
+                self.default_fanout + 1,
             )
 
         log_event(
@@ -409,7 +409,7 @@ class PeerState:
 
         self.fanout = min(
             self.max_fanout,
-            self.default_fanout + 3,
+            self.default_fanout + 1,
         )
 
         if self.mode != old_mode:

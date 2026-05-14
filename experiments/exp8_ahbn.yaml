@@ -2,7 +2,7 @@ experiment: exp8_ahbn
 strategy: ahbn
 
 numNodes: 20
-fanout: 3
+fanout: 2
 numClusters: 4
 
 messageSource: 0
@@ -26,3 +26,8 @@ bottleneck:
   enabled: true
   target: ch_only
   delayMs: 700
+
+ahbn:
+  min_fanout: 1
+  max_fanout: 4
+  mode_threshold: 0.7
