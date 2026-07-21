@@ -298,8 +298,9 @@ class PeerState:
         )
 
         old_mode = self.mode
-
         old_fanout = self.fanout
+        decision_trigger = ""
+        
 
         # --------------------------------------------------
         # Exp8 / overload reaction
@@ -310,6 +311,20 @@ class PeerState:
             or bottleneck_pressure > 0.0
             or overload_pressure > 0.0
         ):
+            # decision_trigger = "fail_pressure_high"
+            
+            if fail_pressure > self.fail_threshold:
+                decision_trigger = "failure_pressure"
+                
+            elif bottleneck_pressure > 0.0:
+                decision_trigger = "bottleneck"
+                
+            elif overload_pressure > 0.0:
+                decision_trigger = "overload"
+                
+            else:
+                decision_trigger = "emergency"
+            
             self.mode = "gossip"
 
             self.fanout = min(
@@ -322,6 +337,8 @@ class PeerState:
         # --------------------------------------------------
 
         elif dup_pressure > self.mode_threshold:
+            decision_trigger = "duplicate_ratio_high"
+            
             self.mode = "cluster"
 
             self.fanout = max(
@@ -330,12 +347,38 @@ class PeerState:
             )
 
         else:
+            decision_trigger = "normal_state"
             self.mode = "gossip"
 
             self.fanout = min(
                 self.max_fanout,
                 self.default_fanout + 1,
             )
+            
+        log_event(
+            event="adaptive_decision",
+
+            run_id=self.run_id,
+            peer_id=self.peer_id,
+
+            decision_trigger=decision_trigger,
+
+            duplicate_ratio=dup_pressure,
+            fail_pressure=fail_pressure,
+            bottleneck_pressure=bottleneck_pressure,
+            overload_pressure=overload_pressure,
+
+            duplicate_threshold=self.mode_threshold,
+            failure_threshold=self.fail_threshold,
+
+            mode_before=old_mode,
+            mode_after=self.mode,
+
+            fanout_before=old_fanout,
+            fanout_after=self.fanout,
+
+            is_cluster_head=self.is_cluster_head,
+        )
 
         log_event(
             event="adaptive_state",
