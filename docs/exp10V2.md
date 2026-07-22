@@ -1,19 +1,7 @@
 
 # Exp10 - Node Failure
-Guideline for Exp10 command. Run 
+Guideline for Exp10 command. But this time we are going to see the adaptation and why did it AHBN acts like that.
 
-### Prerequisite
-You need these on your machine:
-- gcloud
-- kubectl
-- helm
-- docker
-- python
-- a Python virtual environment for local scripts
-
-You also need:
-- a running GKE cluster
-- a Docker registry you can push to, such as Docker Hub
 
 ### Step by step (How to execute)
 
@@ -24,7 +12,6 @@ $ gcloud container clusters create bcgossip-cluster \
   --machine-type e2-medium --quiet
 ```
 
-
 Create docker image for peers in the P2P network. Make sure docker run in the background.
 The latest image is wwiras/ahbn-peer:v10 .
 ```bash
@@ -32,9 +19,9 @@ $ docker build --platform linux/amd64 -t wwiras/ahbn-peer:v24 .
 $ docker push wwiras/ahbn-peer:v24
 ```
 
-Run Exp10 automation and output examples
+Run Exp10 automation and output examples Don't use this. This is a smoke test.
 ```bash
-$ ahbn_gke % IMAGE=wwiras/ahbn-peer:v10 ./scripts/run_exp10.sh
+$ IMAGE=wwiras/ahbn-peer:v10 ./scripts/run_exp10.sh
 [1] Generate topology
 wrote /Users/wwiras/Documents/src/AHBN_GKEProj/ahbn_gke/outputs/exp10-20260420_180532/topology.json
 [2] Copy topology into Helm chart payload
@@ -127,6 +114,13 @@ run_id strategy failure_mode  delivery_ratio  propagation_delay  duplicates  tot
  exp10     ahbn   ch_failure             0.8           0.173416          20              13       0.138168               16              20
 DONE -> /Users/wwiras/Documents/src/AHBN_GKEProj/ahbn_gke/outputs/exp10-20260420_180532
 ```
+
+Run Exp10 automation and output examples Don't use this. This is counted as it is the real one.
+```bash
+$ IMAGE=wwiras/ahbn-peer:v10 ./scripts/run_exp10.sh
+
+```
+
 
 Remove namespace and helm 
 ```bash
